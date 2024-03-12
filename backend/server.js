@@ -12,10 +12,6 @@ const db = mysql.createConnection({
     database: '326petition'
 })
 
-app.get('/', (re, res) => {
-    return res.json("From backend side")
-})
-
 app.get('/getAthletes', (req, res) => {
     db.query('SELECT * FROM athletes', (err, result) => {
         if (err) {
@@ -27,4 +23,13 @@ app.get('/getAthletes', (req, res) => {
 
 app.listen(8081, () => {
     console.log("listening!!")
+})
+
+app.get('/getLevels', (req, res) => {
+    db.query('SELECT * FROM levels', (err, result) => {
+        if (err) {
+            return res.json(err)
+        }
+        return res.json(result)
+    })
 })
