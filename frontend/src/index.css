@@ -82,9 +82,15 @@
 }
 
 .modal-content {
-  background-color: #fff;
+  background-color: #26452d;
   padding: 20px;
   border-radius: 5px;
   max-width: 500px;
   width: 100%;
+}
+
+.modal-close:hover{
+  color: #687d6e;
+  cursor: pointer;
+
 }
