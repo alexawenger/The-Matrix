@@ -9,35 +9,29 @@ const DistanceModal = ({ open, onClose }) => {
     const [minutes, setMinutes] = useState('');
     const [miles, setMiles] = useState('');
 
-    // Handle form submission
-    const handleSubmit = async (event) => {
-        event.preventDefault(); // Prevent the form from refreshing the page
-        const formData = { date, lift, core, minutes, miles };
+    // Handle form submission by sending post request
+    const handleSubmit = (e) => {
+        e.preventDefault();
 
-        // Make the POST request
+        const formData = new FormData();
+        formData.append('date', date);
+        formData.append('lift', lift);
+        formData.append('core', core);
+        formData.append('minutes', minutes);
+        formData.append('miles', miles);
+
         fetch('http://localhost:8081/submitDistEntry', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData),
-        })
-        .then(response => {
-            if (!response.ok) {
-                // If the server responded with an error status, throw an error
-                throw new Error('Server responded with an error: ' + response.status);
+            body: formData,
+        }).then((response) => {
+            if (response.ok) {
+                alert('Successfully logged distance run!');
+                onClose();
             }
-            return response.json(); // Only parse as JSON if response is ok
+            else{
+                alert('Failed to log distance run.');
+            }
         })
-        .then(data => {
-            console.log('Success:', data);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-
-        console.log('Form data ready to be sent to the database:', formData);
-        onClose(); // Close the modal upon submission
     };
 
     if (!open) return null;

@@ -72,39 +72,32 @@ app.get('/getLevels', (req, res) => {
     })
 })
 
-app.post('/submitDistEntry', async (req, res) => {
-    try {
-        const { date, lift, core, minutes, miles } = req.body;
-        const drQuery = 'INSERT INTO DistanceRuns (minutes, miles) VALUES (?, ?);';
+app.post("/submitDistEntry", async (req, res) => {
+  const { date, lift, core, minutes, miles } = req.body;
+  const drQuery = "INSERT INTO DistanceRuns (minutes, miles) VALUES (?, ?);";
 
-        // First query execution
-        const drResult = await new Promise((resolve, reject) => {
-            db.query(drQuery, [minutes, miles], (err, result) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(result);
-                }
-            });
-        });
+  // First query execution
 
-        const eQuery = 'INSERT INTO Entries (date, lift, core, DistanceRunID) VALUES (?, ?, ?, ?);';
-        
-        // Second query execution, using result of the first
-        const eResult = await new Promise((resolve, reject) => {
-            db.query(eQuery, [date, lift, core, drResult.insertId], (err, result) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(result);
-                }
-            });
-        });
+    db.query(drQuery, [minutes, miles], (err, result) => {
+      if (err) {
+        return res.json(err);
+      } else {
+        return res.json("DistanceRun inserted successfully: ", result);
+      }
+    });
 
-        // Respond with the result of the second query
-        res.json(eResult);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Internal server error' });
-    }
+
+  const eQuery =
+    "INSERT INTO Entries (date, lift, core, DistanceRunID) VALUES (?, ?, ?, ?);";
+
+  // // Second query execution, using result of the first
+  // const eResult = await new Promise((resolve, reject) => {
+  //   db.query(eQuery, [date, lift, core, drResult.insertId], (err, result) => {
+  //     if (err) {
+  //       reject(err);
+  //     } else {
+  //       resolve(result);
+  //     }
+  //   });
+  // });
 });
