@@ -8,6 +8,8 @@ app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
 // setup for database connection (called db)
+
+//start xampp server, then go to localhost/phpmyadmin
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -20,46 +22,26 @@ app.listen(8081, () => {
 })
 
 // TESTING HERE
-// app.get('/api/customers', (req, res) => {
-//     const customers = [
-//         { id: 1, firstName: 'John', lastName: 'Doe', email: 'john@gmail.com' },
-//         { id: 2, firstName: 'Jane', lastName: 'Doe', email: 'jane@gmail.com' },
-//         { id: 3, firstName: 'Bob', lastName: 'Smith', email: 'bob@gmail.com' }
-//     ];
-//     res.json(customers);
-// })
+app.post('/api/athletes', async (req, res) => {
+    const q = "INSERT INTO athletes (FirstName, LastName, GradYear, Gender, Password) VALUES (?, ?, ?, ?, ?);";
+    // const values = ["Cam", "Doe", "2021", "Male", "123456"];
+    const values = [
+        req.body.FirstName,
+        req.body.LastName,
+        req.body.GradYear,
+        req.body.Gender,
+        req.body.Password
+    ]
 
+    db.query(q, values, (err, data) => {
+        if (err) {
+            return res.json(err)
+        }
+        console.log("Athlete inserted successfully:")
+        return res.json(data)
+    })
 
-// // example - this should not need to be used anywhere
-// app.get('/Athletes', (req, res) => {
-//     db.query('SELECT * FROM athletes', (err, result) => {
-//         if (err) {
-//             return res.json(err)
-//         }
-//         return res.json(result)
-//     })
-// })
-
-// app.post('/Athletes', async (req, res) => {
-//     const q = "INSERT INTO athletes (AthleteID, FirstName, LastName, GradYear, Gender, Password) VALUES (?, ?, ?, ?, ?, ?);";
-//     const values = ["3", "John", "Doe", "2021", "M", "123456"];
-//     // const values = [
-//     //     req.body.AthleteID,
-//     //     req.body.FirstName,
-//     //     req.body.LastName,
-//     //     req.body.GradYear,
-//     //     req.body.Gender,
-//     //     req.body.Password
-//     // ]
-
-//     db.query(q, values, (err, data) => {
-//         if (err) {
-//             return res.json(err)
-//         }
-//         return res.json("Athlete inserted successfully: ", data)
-//     })
-
-// })
+})
 // END TESTING
 
 
@@ -72,32 +54,35 @@ app.get('/getLevels', (req, res) => {
     })
 })
 
-app.post("/submitDistEntry", async (req, res) => {
+
+
+app.post("/api/submit-run", async (req, res) => {
   const { date, lift, core, minutes, miles } = req.body;
-  const drQuery = "INSERT INTO DistanceRuns (minutes, miles) VALUES (?, ?);";
 
+  console.log(req.body);
+  const drQuery = "INSERT INTO distanceruns (minutes, miles) VALUES (?, ?);";
+  let input = [minutes, miles];
   // First query execution
-
-    db.query(drQuery, [minutes, miles], (err, result) => {
+  let DistanceRunID;
+    db.query(drQuery, input, (err, result) => {
       if (err) {
         return res.json(err);
       } else {
-        return res.json("DistanceRun inserted successfully: ", result);
+        let my_result = res.json(result);
+        DistanceRunID = result.DistanceRunID;
+        return my_result;
       }
     });
 
 
-  const eQuery =
-    "INSERT INTO Entries (date, lift, core, DistanceRunID) VALUES (?, ?, ?, ?);";
+  const eQuery = "INSERT INTO Entries (date, lift, core, DistanceRunID) VALUES (?, ?, ?, ?);";
 
-  // // Second query execution, using result of the first
-  // const eResult = await new Promise((resolve, reject) => {
-  //   db.query(eQuery, [date, lift, core, drResult.insertId], (err, result) => {
-  //     if (err) {
-  //       reject(err);
-  //     } else {
-  //       resolve(result);
-  //     }
-  //   });
-  // });
+  // Second query execution, using result of the first
+  db.query(eQuery, [date, lift, core, DistanceRunID], (err, result) => {
+    if (err) {
+      return res.json(err);
+    } else {
+      return res.json(result);
+    }
+  });
 });

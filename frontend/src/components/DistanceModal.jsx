@@ -19,19 +19,20 @@ const DistanceModal = ({ open, onClose }) => {
         formData.append('core', core);
         formData.append('minutes', minutes);
         formData.append('miles', miles);
+        
+        var object = {};
+        formData.forEach((value, key) => object[key] = value);
+        var json = JSON.stringify(object);
 
-        fetch('http://localhost:8081/submitDistEntry', {
+        fetch('http://localhost:8081/api/submit-run', {
             method: 'POST',
-            body: formData,
-        }).then((response) => {
-            if (response.ok) {
-                alert('Successfully logged distance run!');
-                onClose();
-            }
-            else{
-                alert('Failed to log distance run.');
-            }
-        })
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: json,
+        }).then(response => response.json())
+        .then(data => console.log(data))
+        .catch(error => console.error('Error:', error));
     };
 
     if (!open) return null;
