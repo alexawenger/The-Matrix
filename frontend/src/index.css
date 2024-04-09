@@ -94,3 +94,37 @@
   cursor: pointer;
 
 }
+
+body {
+  font-family: Arial, sans-serif;
+  color: #333;
+  background-color: #f4f4f4;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+/* Header styles */
+th {
+  background-color: #3f563f;
+  color: white;
+}
+
+/* Zebra striping for rows */
+tr:nth-child(odd) {
+  background-color: #f2f2f2;
+}
+
+/* Hover effect for rows */
+tr:hover {
+  background-color: #ddd;
+}

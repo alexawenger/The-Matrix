@@ -54,6 +54,15 @@ app.get('/getLevels', (req, res) => {
     })
 })
 
+app.get('/getEntries', (req, res) => {
+    db.query('SELECT * FROM entries', (err, result) => {
+        if (err) {
+            return res.json(err)
+        }
+        return res.json(result)
+    })
+})
+
 
 
 app.post("/api/submit-run", async (req, res) => {
@@ -79,6 +88,37 @@ app.post("/api/submit-run", async (req, res) => {
 
   // Second query execution, using result of the first
   db.query(eQuery, [date, lift, core, DistanceRunID], (err, result) => {
+    if (err) {
+      return res.json(err);
+    } else {
+      return res.json(result);
+    }
+  });
+});
+
+app.post("/api/submit-workout", async (req, res) => {
+  const { date, lift, core, type, warmupmin, warmupmi, cooldownmin, cooldownmi} = req.body;
+
+  console.log(req.body);
+  const drQuery = "INSERT INTO workouts (type, warmupmin, warmupmi, cooldownmin, cooldownmi) VALUES (?, ?, ?, ?, ?);";
+  let input = [type, warmupmin, warmupmi, cooldownmin, cooldownmi];
+  // First query execution
+  let DistanceRunID;
+    db.query(drQuery, input, (err, result) => {
+      if (err) {
+        return res.json(err);
+      } else {
+        let my_result = res.json(result);
+        WorkoutID = result.WorkoutID;
+        return my_result;
+      }
+    });
+
+
+  const eQuery = "INSERT INTO Entries (date, lift, core, WorkoutID) VALUES (?, ?, ?, ?);";
+
+  // Second query execution, using result of the first
+  db.query(eQuery, [date, lift, core, WorkoutID], (err, result) => {
     if (err) {
       return res.json(err);
     } else {

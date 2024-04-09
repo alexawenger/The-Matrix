@@ -16,11 +16,12 @@ export default function Levels () {
     <div>
         <Header />
         <NavBar />      
-        <table>
+        <table className='levels_table'>
             <thead> 
                 <th>Level</th>
                 <th>Minutes</th>
                 <th>Miles</th>
+                <th>Long Run</th>
             </thead>
             <tbody>
             {data.map((d, i) => (
@@ -28,6 +29,7 @@ export default function Levels () {
                     <td>{d.LevelNo}</td>
                     <td>{d.Minutes}</td>
                     <td>{d.Miles}</td>
+                    <td>{d.Miles * .25}</td>
                 </tr>
             ))}
             </tbody>
