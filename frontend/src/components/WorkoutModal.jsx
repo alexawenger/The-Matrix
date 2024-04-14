@@ -12,7 +12,7 @@ const WorkoutModal = ({ open, onClose }) => {
     const [coolMi, setCoolMi] = useState('');
 
     // Handle form submission by sending post request
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         const formData = new FormData();
@@ -28,16 +28,20 @@ const WorkoutModal = ({ open, onClose }) => {
         var object = {};
         formData.forEach((value, key) => object[key] = value);
         var json = JSON.stringify(object);
-
-        fetch('http://localhost:8081/api/submit-workout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: json,
-        }).then(response => response.json())
-        .then(data => console.log(data))
-        .catch(error => console.error('Error:', error));
+        try {
+            const response = await fetch('http://localhost:8081/api/submit-workout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: json,
+            });
+            const data = await response.json();
+            console.log(data);
+            onClose(); // Close the modal only after successful submission
+        } catch (error) {
+            console.error('Error:', error);
+        }
     };
 
     if (!open) return null;
@@ -64,25 +68,21 @@ const WorkoutModal = ({ open, onClose }) => {
                     </div>
                         <label> Workout Type:</label>
                         <input type="text" value={type} onChange={(e) => setType(e.target.value)} />
-                    <div>
+                    <div className='input-group'>
                         <label> Warmup Minutes:</label>
-                        <input type="number" value={warmMin} onChange={(e) => setMinutes(e.target.value)} />
-                    </div>
-                    <div>
+                        <input type="number" value={warmMin} onChange={(e) => setWarmMin(e.target.value)} />
                         <label> Warmup Miles:</label>
-                        <input type="number" value={warmMi} onChange={(e) => setMiles(e.target.value)} step="0.01" />
+                        <input type="number" value={warmMi} onChange={(e) => setWarmMi(e.target.value)} step="0.01" />
                     </div>
-                    <div>
+                    <div className='input-group'>
                         <label> Cooldown Minutes:</label>
-                        <input type="number" value={coolMin} onChange={(e) => setMinutes(e.target.value)} />
-                    </div>
-                    <div>
+                        <input type="number" value={coolMin} onChange={(e) => setCoolMin(e.target.value)} />
                         <label> Cooldown Miles:</label>
-                        <input type="number" value={coolMi} onChange={(e) => setMiles(e.target.value)} step="0.01" />
+                        <input type="number" value={coolMi} onChange={(e) => setCoolMi(e.target.value)} step="0.01" />
                     </div>
                     <div>
                         <button type="button" className='modal-close' onClick={onClose}>Cancel</button>
-                        <button type="submit" onClick={onClose}>Submit</button>
+                        <button type="submit" className='modal-close' onClick={onClose}>Submit</button>
                     </div>
                 </form>
             </div>

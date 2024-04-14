@@ -13,7 +13,6 @@ function NavBar() {
     <div className="navbar">
       <nav className="navigation">
         <a href="/calendar" className="link">Calendar</a>
-        <a href="/stats" className="link">Stats</a>
         <a href="/levels" className="link">Level Sheet</a>
         <button onClick={()=>setOpenWorkoutModal(true)} className="modal-button">Log a Workout</button>
         <button onClick={()=>setOpenDistanceModal(true)} className="modal-button">Log a Distance Run</button>

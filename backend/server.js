@@ -14,7 +14,7 @@ const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: '326petition'
+    database: 'petition'
 })
 
 app.listen(8081, () => {
@@ -53,17 +53,6 @@ app.get('/getLevels', (req, res) => {
         return res.json(result)
     })
 })
-
-app.get('/getEntries', (req, res) => {
-    db.query('SELECT * FROM entries', (err, result) => {
-        if (err) {
-            return res.json(err)
-        }
-        return res.json(result)
-    })
-})
-
-
 
 app.post("/api/submit-run", async (req, res) => {
   const { date, lift, core, minutes, miles } = req.body;
@@ -126,3 +115,39 @@ app.post("/api/submit-workout", async (req, res) => {
     }
   });
 });
+
+// query to fetch all entries for the month
+app.get('/getEntries', (req, res) => {
+  let cal_query = `SELECT
+                    e.Date,
+                    CASE 
+                      WHEN dr.DistanceRunID IS NOT NULL THEN 'Distance Run'
+                      WHEN w.WorkoutID IS NOT NULL THEN w.Type
+                      ELSE 'No Activity'
+                    END AS Activity_Type,
+                    COALESCE(dr.Minutes, 0) + 
+                    COALESCE(w.WarmupMins, 0) + COALESCE(w.CooldownMins, 0) + 
+                    COALESCE(SUM(r.Seconds)/60, 0) AS Total_Minutes,
+                    COALESCE(dr.Miles, 0) + 
+                    COALESCE(w.WarmupMiles, 0) + COALESCE(w.CooldownMiles, 0) + 
+                    COALESCE(SUM(r.Distance/1600.0), 0) AS Total_Miles
+                  FROM
+                    Entries e
+                  LEFT JOIN
+                    DistanceRuns dr ON e.DistanceRunID = dr.DistanceRunID
+                  LEFT JOIN
+                    Workouts w ON e.WorkoutID = w.WorkoutID
+                  LEFT JOIN
+                    Reps r ON w.WorkoutID = r.WorkoutID
+                  GROUP BY
+                    e.Date, e.WorkoutID, e.DistanceRunID, w.Type, dr.Minutes, dr.Miles, w.WarmupMins, w.CooldownMins, w.WarmupMiles, w.CooldownMiles
+                  ORDER BY
+                    e.Date`;
+  db.query(cal_query, (err, result) => {
+    if (err) {
+    return res.json(err);
+    }
+    return res.json(result);
+   });
+});
+

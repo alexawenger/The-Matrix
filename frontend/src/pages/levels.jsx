@@ -19,17 +19,33 @@ export default function Levels () {
         <table className='levels_table'>
             <thead> 
                 <th>Level</th>
-                <th>Minutes</th>
-                <th>Miles</th>
+                <th>Weekly Minutes</th>
+                <th>Runs per Week</th>
+                <th>Normal Run</th>
                 <th>Long Run</th>
+                <th>7:00</th>
+                <th>7:30</th>
+                <th>8:00</th>
+                <th>8:30</th>
+                <th>9:00</th>
+                <th>9:30</th>
+                <th>10:00</th>
             </thead>
-            <tbody>
+            <tbody className='levels_table'>
             {data.map((d, i) => (
                 <tr key={i}>
                     <td>{d.LevelNo}</td>
                     <td>{d.Minutes}</td>
-                    <td>{d.Miles}</td>
-                    <td>{d.Miles * .25}</td>
+                    <td>{d.RunsPerWeek}</td>
+                    <td>{d.NormalRun}</td>
+                    <td>{d.LongRun}</td>
+                    <td>{d.seven_mm}</td>
+                    <td>{d.sevenThirty_mm}</td>
+                    <td>{d.eight_mm}</td>
+                    <td>{d.eightThirty_mm}</td>
+                    <td>{d.nine_mm}</td>
+                    <td>{d.nineThirty_mm}</td>
+                    <td>{d.ten_mm}</td>
                 </tr>
             ))}
             </tbody>

@@ -69,6 +69,11 @@
   fill: currentColor;
 }
 
+button[type="submit"].modal-close,
+button[type="button"].modal-close {
+  margin-right: 5px; /* Add space between the buttons */
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -79,20 +84,100 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 }
 
 .modal-content {
   background-color: #26452d;
-  padding: 20px;
-  border-radius: 5px;
+  padding: 30px;
+  border-radius: 8px;
   max-width: 500px;
-  width: 100%;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: auto;
+  position: relative;
+}
+
+.modal-content .label {
+  font-size: 1.8em;
+  font-weight: bold;
+  padding: 10px;
+
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="date"],
+.modal-content input[type="number"] {
+  width: calc(100% - 10px);
+  padding: 5px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.modal-content input[type="checkbox"] {
+  margin-right: 10px;
 }
 
 .modal-close:hover{
   color: #687d6e;
   cursor: pointer;
+}
 
+.modal-close {
+  background-color: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.5); /* White border with some transparency */
+  font-size: 1rem;
+  color: white;
+  cursor: pointer;
+  padding: 5px 10px; /* Add some padding */
+  border-radius: 4px; /* Rounded corners for the outline */
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+}
+
+.modal-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #6a7b6c;
+  color: #fff;
+  padding: 5px; /* Adjust padding to match .link */
+  border-radius: 5px;
+  transition: background-color 0.3s; /* Add transition for hover effect */
+  text-decoration: none; /* Remove default link underline */
+  font: 1.2rem/1.5rem "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  border: none;
+  flex-grow: 1;
+  justify-content: center;
+}
+
+.input-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+}
+
+.input-group input {
+  flex-grow: 1;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+label {
+  margin-right: 10px; /* Spacing between label and input */
+  white-space: nowrap; /* Ensure the label text does not wrap */
+  flex-basis: 30%; /* Gives label a fixed percentage of the form-group width */
+
+}
+
+
+.modal-button:hover {
+  background-color: #5f6d61; /* Match the hover color of .link */
 }
 
 body {
@@ -119,12 +204,49 @@ th {
   color: white;
 }
 
-/* Zebra striping for rows */
-tr:nth-child(odd) {
-  background-color: #f2f2f2;
+.calendar-head {
+  /* this is the heading for a calendar that contains the month and year*/
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #3f563f;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+}
+.day-box {
+  display: flex;
+  flex-direction: column;
+  position: relative; 
 }
 
-/* Hover effect for rows */
+.date-box {
+  position: relative; /* Position absolutely within the day-box */
+  top: 0;
+  left: 0;
+  padding: 2px 5px; /* Adjust padding as needed */
+  background-color: #f0f0f0; /* Light grey background, adjust as needed */
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+.date-workout {
+  display: flex;
+  justify-content: space-between;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+}
+
+.minutes, .miles {
+  flex-basis: 50%;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2; 
+}
+
 tr:hover {
-  background-color: #ddd;
+  background-color: #ddd; 
 }

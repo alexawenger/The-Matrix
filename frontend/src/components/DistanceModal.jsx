@@ -42,7 +42,7 @@ const DistanceModal = ({ open, onClose }) => {
             <div className='modal-content'>
                 <form onSubmit={handleSubmit}>
                     <div>
-                        <label>Date:</label>
+                        <label>Date: </label>
                         <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
                     </div>
                     <div>
@@ -55,17 +55,17 @@ const DistanceModal = ({ open, onClose }) => {
                             Core
                         </label>
                     </div>
-                    <div>
-                        <label>Minutes:</label>
+                    <div className='input-group'>
+                        <label>Minutes: </label>
                         <input type="number" value={minutes} onChange={(e) => setMinutes(e.target.value)} />
                     </div>
-                    <div>
-                        <label>Miles:</label>
+                    <div className='input-group'>
+                        <label>Miles: </label>
                         <input type="number" value={miles} onChange={(e) => setMiles(e.target.value)} step="0.01" />
                     </div>
                     <div>
                         <button type="button" className='modal-close' onClick={onClose}>Cancel</button>
-                        <button type="submit" onClick={onClose}>Submit</button>
+                        <button type="submit" className='modal-close' onClick={onClose}>Submit</button>
                     </div>
                 </form>
             </div>

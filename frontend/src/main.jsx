@@ -10,7 +10,7 @@ import {
 } from "react-router-dom";
 import ErrorPage from './pages/errorPage.jsx'
 import Levels from './pages/levels.jsx'
-import Stats from './pages/stats.jsx'
+import WorkoutModal from './components/WorkoutModal.jsx'
 
 
 const router = createBrowserRouter([
@@ -22,11 +22,6 @@ const router = createBrowserRouter([
   {
     path: "/calendar",
     element: <Calendar />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/stats",
-    element: <Stats />,
     errorElement: <ErrorPage />,
   },
   {
