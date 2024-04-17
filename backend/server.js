@@ -54,11 +54,11 @@ app.get('/getLevels', (req, res) => {
     })
 })
 
-app.post("/api/submit-run", async (req, res) => {
+app.post("/submit-run", async (req, res) => {
   const { date, lift, core, minutes, miles } = req.body;
 
   console.log(req.body);
-  const drQuery = "INSERT INTO distanceruns (minutes, miles) VALUES (?, ?);";
+  const drQuery = "INSERT INTO distanceruns (Minutes, Miles) VALUES (?, ?);";
   let input = [minutes, miles];
   // First query execution
   let DistanceRunID;
@@ -85,34 +85,59 @@ app.post("/api/submit-run", async (req, res) => {
   });
 });
 
-app.post("/api/submit-workout", async (req, res) => {
-  const { date, lift, core, type, warmupmin, warmupmi, cooldownmin, cooldownmi} = req.body;
-
-  console.log(req.body);
-  const drQuery = "INSERT INTO workouts (type, warmupmin, warmupmi, cooldownmin, cooldownmi) VALUES (?, ?, ?, ?, ?);";
-  let input = [type, warmupmin, warmupmi, cooldownmin, cooldownmi];
-  // First query execution
-  let DistanceRunID;
-    db.query(drQuery, input, (err, result) => {
-      if (err) {
-        return res.json(err);
-      } else {
-        let my_result = res.json(result);
-        WorkoutID = result.WorkoutID;
-        return my_result;
-      }
-    });
-
-
-  const eQuery = "INSERT INTO Entries (date, lift, core, WorkoutID) VALUES (?, ?, ?, ?);";
-
-  // Second query execution, using result of the first
-  db.query(eQuery, [date, lift, core, WorkoutID], (err, result) => {
+app.post('/submit-workout', (req, res) => {
+  db.beginTransaction(err => {
     if (err) {
-      return res.json(err);
-    } else {
-      return res.json(result);
+        throw err;
     }
+
+    const workoutQuery = 'INSERT INTO workouts (Type, WarmupMins, WarmupMiles, CooldownMins, CooldownMiles) VALUES (?, ?, ?, ?, ?)';
+    db.query(workoutQuery, [workoutData.type, workoutData.warmupMins, workoutData.warmupMiles, workoutData.cooldownMins, workoutData.cooldownMiles], (error, workoutResults) => {
+        if (error) {
+            return db.rollback(() => {
+                throw error;
+            });
+        }
+
+        const workoutId = workoutResults.insertId;
+        const repQueries = repsData.map(rep => {
+            return new Promise((resolve, reject) => {
+                const repQuery = 'INSERT INTO reps (WorkoutID, Distance, Time, Rest) VALUES (?, ?, ?, ?)';
+                db.query(repQuery, [workoutId, rep.distance, rep.time, rep.rest], (error, results) => {
+                    if (error) {
+                        return reject(error);
+                    }
+                    resolve(results);
+                });
+            });
+        });
+
+        Promise.all(repQueries)
+            .then(() => {
+                const entryQuery = 'INSERT INTO Entries (Date, Lift, Core, WorkoutID) VALUES (?, ?, ?, ?)';
+                db.query(entryQuery, [entryData.date, entryData.lift, entryData.core, workoutId], (error, entryResults) => {
+                    if (error) {
+                        return db.rollback(() => {
+                            throw error;
+                        });
+                    }
+
+                    db.commit(err => {
+                        if (err) {
+                            return db.rollback(() => {
+                                throw err;
+                            });
+                        }
+                        console.log('Transaction Complete.');
+                    });
+                });
+            })
+            .catch(error => {
+                db.rollback(() => {
+                    throw error;
+                });
+            });
+    });
   });
 });
 

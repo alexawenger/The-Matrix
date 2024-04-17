@@ -18,6 +18,7 @@ export default function Levels () {
         <NavBar />      
         <table className='levels_table'>
             <thead> 
+              <tr>
                 <th>Level</th>
                 <th>Weekly Minutes</th>
                 <th>Runs per Week</th>
@@ -30,6 +31,7 @@ export default function Levels () {
                 <th>9:00</th>
                 <th>9:30</th>
                 <th>10:00</th>
+              </tr>
             </thead>
             <tbody className='levels_table'>
             {data.map((d, i) => (

@@ -44,7 +44,7 @@ export default function Calendar() {
       <div className="day-box">
         <div className="date-workout">
           <span className="date-box">{format(day.date, 'd')}</span>
-          <span className="workout">{day.type || ''}</span>
+          <span className="workout">{day.type ? ( " - " + day.type) : " " || ''}</span>
         </div>
         <div className="stats">
           <div className="minutes">{day.minutes || 0} mins</div>
@@ -54,15 +54,37 @@ export default function Calendar() {
     );
   };
 
-  const renderWeek = (weekDates) => {
-    const days = weekDates.map((day) => (
-      <td className='day-cell' key={format(day.date, 'yyyy-MM-dd')}>
-        {renderDay(day)}
-      </td>
-    ));
+  const renderWeek = (weekDates, weekIndex) => {
+    let totalMinutes = 0;
+    let totalMiles = 0;
   
-    return days;  // return only <td> elements
+    const days = weekDates.map((day, index) => {
+      // Summing up the totals
+      totalMinutes += day.minutes || 0;
+      totalMiles += day.miles || 0;
+  
+      // Append weekIndex to ensure uniqueness across weeks
+      const dayKey = `${format(day.date, 'yyyy-MM-dd')}-w${weekIndex}`;
+  
+      return (
+        <td className='day-cell' key={dayKey}>
+          {renderDay(day)}
+        </td>
+      );
+    });
+  
+    // Create a total cell
+    const totalsCell = (
+      <td className='week-totals'>
+        <div className='minutes'> {totalMinutes} mins</div>
+        <div className='miles'> {totalMiles} miles</div>
+      </td>
+    );
+  
+    // Include the totals cell in the row
+    return [...days, totalsCell];  // Add the total column to the row
   };
+  
   
   
   const renderCalendar = () => {
@@ -72,8 +94,8 @@ export default function Calendar() {
     calendar.forEach((day, index) => {
       week.push(day);
       if (week.length === 7 || index === calendar.length - 1) { // Check if the week is complete or it's the end of the array
-        const weekKey = format(week[0].date, 'yyyy-wo');  // Correctly formatted week key
-        weeks.push(<tr key={weekKey}>{renderWeek(week)}</tr>); // Ensure weeks are directly within <tbody> or <table>
+        const weekKey = `${format(week[0].date, 'yyyy-MM-dd')}-${format(week[week.length - 1].date, 'yyyy-MM-dd')}`;  // More unique key
+        weeks.push(<tr key={weekKey}>{renderWeek(week)}</tr>); // Push the complete week
         week = []; // Reset the week
       }
     });
@@ -84,7 +106,6 @@ export default function Calendar() {
       </tbody>
     );
   };
-  
   
   return (
     <div>

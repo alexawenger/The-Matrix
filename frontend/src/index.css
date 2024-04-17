@@ -98,6 +98,8 @@ button[type="button"].modal-close {
   align-items: flex-start;
   margin: auto;
   position: relative;
+  overflow-y: auto;
+  max-height: 80%;
 }
 
 .modal-content .label {
@@ -190,22 +192,24 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin: 20px 0;
+  background-color: #fff; /* Bright background for better contrast */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1); /* Subtle shadow for depth */
 }
 
 th, td {
   padding: 10px;
   border: 1px solid #ddd;
-  text-align: left;
+  text-align: center; /* Center text in cells */
 }
 
 /* Header styles */
 th {
   background-color: #3f563f;
   color: white;
+  font-weight: bold;
 }
 
 .calendar-head {
-  /* this is the heading for a calendar that contains the month and year*/
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -214,39 +218,96 @@ th {
   padding: 10px;
   border-radius: 5px;
 }
+
 .day-box {
-  display: flex;
-  flex-direction: column;
-  position: relative; 
+  display: grid;
+  grid-template-columns: minmax(auto, max-content) 1fr; /* Create two columns */
+  grid-template-rows: auto 1fr; /* Create two rows */
+  gap: 5px; /* Space between grid items */
+  background-color: #6a7b6c; /* Base background color */
+  border: 1px solid #ddd; /* Border for the day box */
+  border-radius: 5px; /* Rounded corners for the box */
+  overflow: hidden; /* Ensures nothing spills out of the box */
 }
 
 .date-box {
-  position: relative; /* Position absolutely within the day-box */
-  top: 0;
-  left: 0;
-  padding: 2px 5px; /* Adjust padding as needed */
-  background-color: #f0f0f0; /* Light grey background, adjust as needed */
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+  color: #fff; /* White color for the date text */
+  display: flex;
+  align-items: center;
+  border-radius: 5px; /* Rounded corners for the box */
+  justify-content: center;
+  padding: 5px;
+  font-weight: bold;
 }
 .date-workout {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  overflow: hidden; /* Ensures text doesn't overflow the box */
+  white-space: nowrap; /* Prevents wrapping and keeps content in a single line */
+  text-overflow: ellipsis; /* Adds an ellipsis if the text overflows */
+  color: #fff; /* White color for the date text */
+  font-weight: bold;
 }
 
 .stats {
+  grid-column: 1 / 3;
+  grid-row: 2 / 3;
   display: flex;
-  justify-content: space-around;
+  border-top: 1px solid #ddd; /* Adds a visual separation */
 }
 
 .minutes, .miles {
-  flex-basis: 50%;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
 }
+
+.minutes {
+  background-color: #cad5cb; /* Light green background for minutes */
+}
+
+.miles {
+  background-color: #aab5ab; /* Light blue background for miles */
+}
+
+.week-totals {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two equal columns */
+  grid-template-rows: repeat(2, auto); /* Two rows to accommodate minutes and miles */
+  gap: 5px; /* Space between grid items */
+  background-color: #6a7b6c; /* Dark green background to match the headers */
+  border-radius: 5px; /* Rounded corners for consistency */
+  padding: 10px;
+  padding-top: 17px;
+  padding-bottom: 17px;
+  margin-top: 10px; /* Space from the last row */
+  align-items:end; /* Center the items vertically */
+  display: flex;
+  align-self: end;
+}
+
+
+.week-totals .minutes{
+  background-color: #cad5cb; /* Lighter green background for distinction, same as navbar */
+  border-radius: 3px;
+}
+.week-totals .miles{
+  background-color: #aab5ab; /* Lighter green background for distinction, same as navbar */
+  border-radius: 3px;
+
+}
+
 
 tr:nth-child(even) {
   background-color: #f2f2f2; 
 }
 
 tr:hover {
-  background-color: #ddd; 
+  background-color: #eee; /* Light grey background on hover */
 }

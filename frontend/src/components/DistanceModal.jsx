@@ -10,29 +10,27 @@ const DistanceModal = ({ open, onClose }) => {
     const [miles, setMiles] = useState('');
 
     // Handle form submission by sending post request
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const formData = new FormData();
-        formData.append('date', date);
-        formData.append('lift', lift);
-        formData.append('core', core);
-        formData.append('minutes', minutes);
-        formData.append('miles', miles);
-        
-        var object = {};
-        formData.forEach((value, key) => object[key] = value);
-        var json = JSON.stringify(object);
+        const formData = {
+            date, lift, core, minutes, miles
+        };
 
-        fetch('http://localhost:8081/api/submit-run', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: json,
-        }).then(response => response.json())
-        .then(data => console.log(data))
-        .catch(error => console.error('Error:', error));
+        try{
+            const response = await fetch('http://localhost:8081/submit-run',
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+            });
+            const data = await response.json();
+            console.log(data);
+            onClose();
+        }
+        catch (error) {
+          console.error(error);
+        }
     };
 
     if (!open) return null;
@@ -65,7 +63,7 @@ const DistanceModal = ({ open, onClose }) => {
                     </div>
                     <div>
                         <button type="button" className='modal-close' onClick={onClose}>Cancel</button>
-                        <button type="submit" className='modal-close' onClick={onClose}>Submit</button>
+                        <button type="submit" className='modal-close'>Submit</button>
                     </div>
                 </form>
             </div>
