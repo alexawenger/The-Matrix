@@ -86,25 +86,21 @@ app.post("/submit-run", async (req, res) => {
 
 app.post('/submit-workout', (req, res) => {
   console.log("in submit workout", req.body);
-  const { date, lift, core, type, warmupMiles, warmupMins, cooldownMiles, cooldownMins, reps } = req.body;
+  const { date, lift, core, type, warmupMins, warmupMiles, cooldownMins, cooldownMiles, reps } = req.body;
   const workoutQuery = "INSERT INTO workouts (Type, WarmupMins, WarmupMiles, CooldownMins, CooldownMiles) VALUES (?, ?, ?, ?, ?);";
-  let input = [type, warmupMins, warmupMiles, cooldownMins, cooldownMiles];
 
-  db.query(workoutQuery, input, (err, result) => {
+  console.log(type, warmupMins, warmupMiles, cooldownMins, cooldownMiles); // Log to check values
+  db.query(workoutQuery, [type, warmupMins, warmupMiles, cooldownMins, cooldownMiles], (err, result) => {
     if(err){
-      console.log("error 1");
       return res.status(500).json({ error: err });
     }else{
-      console.log("workout inserted successfully");
       workoutID = result.insertId;
       const eQuery = "INSERT INTO Entries (date, lift, core, workoutID) VALUES (?, ?, ?, ?);";
 
       db.query(eQuery, [date, lift, core, workoutID], (err, result) => {
         if(err){
-          console.log("error 2");
           return res.status(500).json({ error: err });
         } else{
-          console.log("entry inserted successfully");
            // Loop over reps and insert each one
            async.eachSeries(reps, (rep, callback) => {
             const repQuery = "INSERT INTO reps (workoutID, distance, seconds, restSecs) VALUES (?, ?, ?, ?);";
@@ -115,8 +111,7 @@ app.post('/submit-workout', (req, res) => {
             if (err) {
               return res.status(500).json({ error: err });
             } else {
-              res.json({ message: 'All reps inserted successfully' });
-              return res.json(result);
+              return res.json( {message: 'Workout inserted successfully', result});
             }
           });
         }

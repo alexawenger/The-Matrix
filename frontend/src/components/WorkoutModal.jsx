@@ -6,10 +6,10 @@ const WorkoutModal = ({ open, onClose }) => {
     const [lift, setLift] = useState(false);
     const [core, setCore] = useState(false);
     const [type, setType] = useState('');
-    const [warmMin, setWarmMin] = useState('');
-    const [warmMi, setWarmMi] = useState('');
-    const [coolMin, setCoolMin] = useState('');
-    const [coolMi, setCoolMi] = useState('');
+    const [warmupMiles, setWarmupMiles] = useState('');
+    const [warmupMins, setWarmupMins] = useState('');
+    const [cooldownMiles, setCooldownMiles] = useState('');
+    const [cooldownMins, setCooldownMins] = useState('');
     const [reps, setReps] = useState([{ time: '', distance: '', rest: '' }]);
 
     // Function to handle changes in rep inputs
@@ -38,7 +38,7 @@ const WorkoutModal = ({ open, onClose }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = {
-            date, lift, core, type, warmMin, warmMi, coolMin, coolMi, reps
+            date, lift, core, type, warmupMins, warmupMiles, cooldownMins, cooldownMiles, reps
         };
         
         try {
@@ -81,15 +81,15 @@ const WorkoutModal = ({ open, onClose }) => {
                         <input type="text" value={type} onChange={(e) => setType(e.target.value)} />
                     <div className='input-group'>
                         <label> Warmup Minutes:</label>
-                        <input type="number" value={warmMin} onChange={(e) => setWarmMin(e.target.value)} />
+                        <input type="number" value={warmupMins} onChange={(e) => setWarmupMins(e.target.value)} />
                         <label> Warmup Miles:</label>
-                        <input type="number" value={warmMi} onChange={(e) => setWarmMi(e.target.value)} step="0.01" />
+                        <input type="number" value={warmupMiles} onChange={(e) => setWarmupMiles(e.target.value)} step="0.01" />
                     </div>
                     <div className='input-group'>
                         <label> Cooldown Minutes:</label>
-                        <input type="number" value={coolMin} onChange={(e) => setCoolMin(e.target.value)} />
+                        <input type="number" value={cooldownMins} onChange={(e) => setCooldownMins(e.target.value)} />
                         <label> Cooldown Miles:</label>
-                        <input type="number" value={coolMi} onChange={(e) => setCoolMi(e.target.value)} step="0.01" />
+                        <input type="number" value={cooldownMiles} onChange={(e) => setCooldownMiles(e.target.value)} step="0.01" />
                     </div>
                         {reps.map((rep, index) => (
                         <div key={index} className="rep-group"> Rep {index + 1}: 
