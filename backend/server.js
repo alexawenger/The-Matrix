@@ -1,6 +1,8 @@
 const express = require('express');
 const mysql = require('mysql');
 const cors = require('cors');
+const async = require('async');
+
 
 const app = express()
 app.use(cors())
@@ -83,58 +85,43 @@ app.post("/submit-run", async (req, res) => {
 
 
 app.post('/submit-workout', (req, res) => {
-  db.beginTransaction(err => {
-    if (err) {
-        throw err;
-    }
+  console.log("in submit workout", req.body);
+  const { date, lift, core, type, warmupMiles, warmupMins, cooldownMiles, cooldownMins, reps } = req.body;
+  const workoutQuery = "INSERT INTO workouts (Type, WarmupMins, WarmupMiles, CooldownMins, CooldownMiles) VALUES (?, ?, ?, ?, ?);";
+  let input = [type, warmupMins, warmupMiles, cooldownMins, cooldownMiles];
 
-    const workoutQuery = 'INSERT INTO workouts (Type, WarmupMins, WarmupMiles, CooldownMins, CooldownMiles) VALUES (?, ?, ?, ?, ?)';
-    db.query(workoutQuery, [workoutData.type, workoutData.warmupMins, workoutData.warmupMiles, workoutData.cooldownMins, workoutData.cooldownMiles], (error, workoutResults) => {
-        if (error) {
-            return db.rollback(() => {
-                throw error;
+  db.query(workoutQuery, input, (err, result) => {
+    if(err){
+      console.log("error 1");
+      return res.status(500).json({ error: err });
+    }else{
+      console.log("workout inserted successfully");
+      workoutID = result.insertId;
+      const eQuery = "INSERT INTO Entries (date, lift, core, workoutID) VALUES (?, ?, ?, ?);";
+
+      db.query(eQuery, [date, lift, core, workoutID], (err, result) => {
+        if(err){
+          console.log("error 2");
+          return res.status(500).json({ error: err });
+        } else{
+          console.log("entry inserted successfully");
+           // Loop over reps and insert each one
+           async.eachSeries(reps, (rep, callback) => {
+            const repQuery = "INSERT INTO reps (workoutID, distance, seconds, restSecs) VALUES (?, ?, ?, ?);";
+            db.query(repQuery, [workoutID, rep.distance, rep.time, rep.rest], (err, result) => {
+              callback(err);
             });
+          }, (err) => {
+            if (err) {
+              return res.status(500).json({ error: err });
+            } else {
+              res.json({ message: 'All reps inserted successfully' });
+              return res.json(result);
+            }
+          });
         }
-
-        const workoutId = workoutResults.insertId;
-        const repQueries = repsData.map(rep => {
-            return new Promise((resolve, reject) => {
-                const repQuery = 'INSERT INTO reps (WorkoutID, Distance, Time, Rest) VALUES (?, ?, ?, ?)';
-                db.query(repQuery, [workoutId, rep.distance, rep.time, rep.rest], (error, results) => {
-                    if (error) {
-                        return reject(error);
-                    }
-                    resolve(results);
-                });
-            });
-        });
-
-        Promise.all(repQueries)
-            .then(() => {
-                const entryQuery = 'INSERT INTO Entries (Date, Lift, Core, WorkoutID) VALUES (?, ?, ?, ?)';
-                db.query(entryQuery, [entryData.date, entryData.lift, entryData.core, workoutId], (error, entryResults) => {
-                    if (error) {
-                        return db.rollback(() => {
-                            throw error;
-                        });
-                    }
-
-                    db.commit(err => {
-                        if (err) {
-                            return db.rollback(() => {
-                                throw err;
-                            });
-                        }
-                        console.log('Transaction Complete.');
-                    });
-                });
-            })
-            .catch(error => {
-                db.rollback(() => {
-                    throw error;
-                });
-            });
-    });
+      });
+    }
   });
 });
 
