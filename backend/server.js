@@ -57,33 +57,30 @@ app.get('/getLevels', (req, res) => {
 app.post("/submit-run", async (req, res) => {
   const { date, lift, core, minutes, miles } = req.body;
 
-  console.log(req.body);
   const drQuery = "INSERT INTO distanceruns (Minutes, Miles) VALUES (?, ?);";
   let input = [minutes, miles];
   // First query execution
-  let DistanceRunID;
     db.query(drQuery, input, (err, result) => {
       if (err) {
-        return res.json(err);
+        return res.status(500).json({ error: err });
       } else {
-        let my_result = res.json(result);
-        DistanceRunID = result.DistanceRunID;
-        return my_result;
+        DistanceRunID = result.insertId;
+        const eQuery = "INSERT INTO Entries (date, lift, core, DistanceRunID) VALUES (?, ?, ?, ?);";
+
+        // Second query execution, using result of the first
+        db.query(eQuery, [date, lift, core, DistanceRunID], (err, result) => {
+          if (err) {
+            return db.rollback(() => {
+              res.status(500).json({ error: err });
+            });
+          } else {
+            res.json(result);
+          }
+        });
       }
-    });
-
-
-  const eQuery = "INSERT INTO Entries (date, lift, core, DistanceRunID) VALUES (?, ?, ?, ?);";
-
-  // Second query execution, using result of the first
-  db.query(eQuery, [date, lift, core, DistanceRunID], (err, result) => {
-    if (err) {
-      return res.json(err);
-    } else {
-      return res.json(result);
-    }
-  });
+    });  
 });
+
 
 app.post('/submit-workout', (req, res) => {
   db.beginTransaction(err => {
