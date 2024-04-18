@@ -3,6 +3,7 @@ import '../index.css';
 import { format, startOfWeek, addDays, startOfMonth } from 'date-fns';
 import NavBar from '../components/navbar';
 import Header from '../components/header';
+import {toZonedTime} from 'date-fns-tz';
 
 export default function Calendar() {
   const [entries, setEntries] = useState([]);
@@ -15,7 +16,9 @@ export default function Calendar() {
       .then((data) => {
         const normalizedEntries = data.map(entry => ({
           ...entry,
+          // date: (toZonedTime(entry.Date)).split('T')[0],
           date: entry.Date.split('T')[0],
+          // date: new Date(entry.Date).toLocaleDateString(),
           type: entry.Activity_Type,
           minutes: entry.Total_Minutes,
           miles: entry.Total_Miles,
