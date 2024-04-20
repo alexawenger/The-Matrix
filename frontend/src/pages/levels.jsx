@@ -1,3 +1,6 @@
+// Levels page is the page that shows the table with all the data in the levels entity
+// It fetches the data from the backend and displays it in a table
+
 import React, { useEffect } from 'react'
 import NavBar from '../components/navbar';
 import Header from '../components/header';

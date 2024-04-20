@@ -1,3 +1,6 @@
+// this navbar component is reused on all pages to allow users to navigate the webapp
+// it contains links to the calendar, level sheet, and sign out
+
 import React from 'react';
 import "../index.css"; 
 import DistModal from './DistanceModal.jsx';

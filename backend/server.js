@@ -1,3 +1,6 @@
+// This file contains the database connection and the functions to query the database.
+// It also contains the endpoints for the backend server.
+
 const express = require('express');
 const mysql = require('mysql');
 const cors = require('cors');

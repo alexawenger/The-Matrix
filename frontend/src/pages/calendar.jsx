@@ -1,9 +1,11 @@
+// This is the calendar page of the website, which renders all the entries for the month with weekly sums
+
+
 import React, { useEffect, useState } from 'react';
 import '../index.css';
 import { format, startOfWeek, addDays, startOfMonth, parseISO } from 'date-fns';
 import NavBar from '../components/navbar';
 import Header from '../components/header';
-import {toZonedTime} from 'date-fns-tz';
 
 export default function Calendar() {
   const [entries, setEntries] = useState([]);
@@ -21,7 +23,6 @@ export default function Calendar() {
 
         const normalizedEntries = data.map((entry) => ({
           ...entry,
-          // date: entry.Date.split("T")[0],
           type: entry.Activity_Type,
           minutes: entry.Total_Minutes,
           miles: entry.Total_Miles,

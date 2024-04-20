@@ -1,3 +1,6 @@
+// This simple header component is reused on each page and displays the title of the site
+// it also has a link to the github repository for the project
+
 import React from 'react';
 import { FaGithub } from 'react-icons/fa';
 import "../index.css"; 

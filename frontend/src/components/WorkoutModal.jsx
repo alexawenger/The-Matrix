@@ -1,3 +1,6 @@
+// This workout modal allows athletes to add a workout record to their entries. 
+// It handles the submission of the workout and the addition of it to the entry, workout, and reps tables.
+
 import React, { useState } from 'react';
 import '../index.css';
 

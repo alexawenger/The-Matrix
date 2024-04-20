@@ -1,3 +1,6 @@
+// This is the main file of the webapp
+// It renders the App component in the root div of the index.html file
+
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'

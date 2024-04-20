@@ -1,3 +1,6 @@
+// This file is used to add distance runs to the entries and distanceruns tables
+// it allows user input using a form and stores the entered data in the database
+
 import React, { useState } from 'react';
 import '../index.css'; // Ensure you have Modal.css for styling
 

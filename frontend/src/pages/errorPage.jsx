@@ -1,3 +1,6 @@
+// This is a custom error page 
+// It is used to display an error message when an error occurs in the application
+
 import { useRouteError } from "react-router-dom";
 
 export default function ErrorPage() {
