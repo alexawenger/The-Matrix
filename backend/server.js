@@ -23,30 +23,6 @@ app.listen(8081, () => {
     console.log("Server started on port 8081")
 })
 
-// TESTING HERE
-app.post('/api/athletes', async (req, res) => {
-    const q = "INSERT INTO athletes (FirstName, LastName, GradYear, Gender, Password) VALUES (?, ?, ?, ?, ?);";
-    // const values = ["Cam", "Doe", "2021", "Male", "123456"];
-    const values = [
-        req.body.FirstName,
-        req.body.LastName,
-        req.body.GradYear,
-        req.body.Gender,
-        req.body.Password
-    ]
-
-    db.query(q, values, (err, data) => {
-        if (err) {
-            return res.json(err)
-        }
-        console.log("Athlete inserted successfully:")
-        return res.json(data)
-    })
-
-})
-// END TESTING
-
-
 app.get('/getLevels', (req, res) => {
     db.query('SELECT * FROM levels', (err, result) => {
         if (err) {

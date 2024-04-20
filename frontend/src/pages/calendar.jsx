@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../index.css';
-import { format, startOfWeek, addDays, startOfMonth } from 'date-fns';
+import { format, startOfWeek, addDays, startOfMonth, parseISO } from 'date-fns';
 import NavBar from '../components/navbar';
 import Header from '../components/header';
 import {toZonedTime} from 'date-fns-tz';
@@ -14,23 +14,29 @@ export default function Calendar() {
     fetch('http://localhost:8081/getEntries')
       .then((res) => res.json())
       .then((data) => {
-        const normalizedEntries = data.map(entry => ({
+        data = data.map((entry) => ({
           ...entry,
-          // date: (toZonedTime(entry.Date)).split('T')[0],
-          date: entry.Date.split('T')[0],
-          // date: new Date(entry.Date).toLocaleDateString(),
+          Date: entry.Date.split("T")[0],
+        }));
+
+        const normalizedEntries = data.map((entry) => ({
+          ...entry,
+          // date: entry.Date.split("T")[0],
           type: entry.Activity_Type,
           minutes: entry.Total_Minutes,
           miles: entry.Total_Miles,
         }));
 
-        const startDate = startOfWeek(startOfMonth(currentDate), { weekStartsOn: 0 });
+        const startDate = startOfWeek(startOfMonth(currentDate), {
+          weekStartsOn: 0,
+        });
         const endDate = addDays(startDate, 34); // 5 weeks displayed
 
         const days = [];
         for (let day = startDate; day <= endDate; day = addDays(day, 1)) {
-          const dateKey = format(day, 'yyyy-MM-dd');
-          const entryDetails = normalizedEntries.find(entry => entry.date === dateKey) || {};
+          const dateKey = format(day, "yyyy-MM-dd");
+          const entryDetails =
+            normalizedEntries.find((entry) => entry.Date === dateKey) || {};
           days.push({
             date: day,
             ...entryDetails,
