@@ -9,7 +9,7 @@
 This project is a React webapp that connects to a SQL backend using Express middleware. 
 
 
-Notable Files
+## Notable Files
 - server.js
 - calendar.jsx
 - distancemodal.jsx
